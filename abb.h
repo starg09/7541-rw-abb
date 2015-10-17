@@ -58,7 +58,7 @@ void abb_destruir(abb_t *arbol);
 
 
 // 
-// ITERADOR INTERNO DEL ÁRBOL BINARIO DE BÚSQUEDA
+// ITERADOR INTERNO "INORDEN" DEL ÁRBOL BINARIO DE BÚSQUEDA
 // 
 
 // 
@@ -67,7 +67,7 @@ void abb_in_order(abb_t *arbol, bool (*visitar)(const char *, void *, void *), v
 
 
 // 
-//  ITERADOR EXTERNO DEL ÁRBOL BINARIO DE BÚSQUEDA
+//  ITERADOR EXTERNO "INORDEN" DEL ÁRBOL BINARIO DE BÚSQUEDA
 // 
 
 
@@ -76,7 +76,7 @@ void abb_in_order(abb_t *arbol, bool (*visitar)(const char *, void *, void *), v
 typedef struct abb_iter abb_iter_t;
 
 
-// Definición de las funciones del iterador externo del ABB.
+// Definición de las funciones del iterador externo de tipo "inorder" del ABB.
 
 // 
 abb_iter_t *abb_iter_in_crear(const abb_t *arbol);
