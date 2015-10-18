@@ -182,3 +182,23 @@ void *abb_obtener(const abb_t *arbol, const char *clave){
 		return arbol->dato;
 	}
 }
+
+size_t abb_cantidad(abb_t *arbol){
+	return arbol->nodos;
+}
+
+void abb_destruir(abb_t *arbol){
+	if (arbol->nodos > 0){
+		if (arbol->izq != NULL)
+			abb_destruir(arbol->izq);
+		if (arbol->der != NULL)
+			abb_destruir(arbol->der);
+
+		if (arbol->func_destruct != NULL)
+			func_destruct(arbol->dato);
+
+		free(arbol->clave);
+	}
+
+	free(arbol);
+}
