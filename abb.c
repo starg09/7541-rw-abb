@@ -144,12 +144,20 @@ void *abb_borrar(abb_t *arbol, const char *clave){
 				if (clave_temp == NULL)
 					return NULL;
 				dato_temp = abb_borrar(arbol->izq, clave_temp);
+				if (arbol->izq->nodos == 0){
+					abb_destruir(arbol->izq);
+					arbol->izq = NULL;
+				}
 			} else {
 				arbol_temp = abb_buscar_min(arbol->der);
 				clave_temp = strdup(arbol_temp->clave);
 				if (clave_temp == NULL)
 					return NULL;
 				dato_temp = abb_borrar(arbol->der, clave_temp);
+				if (arbol->der->nodos == 0){
+					abb_destruir(arbol->der);
+					arbol->der = NULL;
+				}
 			}
 
 			arbol->dato = dato_temp;
