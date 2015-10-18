@@ -161,3 +161,24 @@ void *abb_borrar(abb_t *arbol, const char *clave){
 	abb_recalcular_nodos(arbol);
 	return dato;
 }
+
+void *abb_obtener(const abb_t *arbol, const char *clave){
+	if (arbol->nodos == 0)
+		return NULL;
+
+	void* dato;
+
+	int cmp = (arbol->func_comp(clave, arbol->clave) );
+
+	if (cmp < 0){
+		if (arbol->izq == NULL)
+			return NULL;
+		dato = abb_obtener(arbol->izq, clave);
+	} else if (cmp > 0){
+		if (arbol->der == NULL)
+			return NULL;
+		dato = abb_obtener(arbol->der, clave);
+	} else if (cmp == 0){
+		return arbol->dato;
+	}
+}
