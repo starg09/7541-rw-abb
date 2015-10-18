@@ -1,6 +1,9 @@
 #ifndef ABB_H
 #define ABB_H
 
+#include <stdlib.h>
+#include <stdbool.h>
+
 
 ////////////////////////////////////
 ///  ÁRBOL BINARIO DE BÚSQUEDA  ///
