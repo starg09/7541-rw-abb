@@ -96,6 +96,20 @@ bool abb_guardar(abb_t *arbol, const char *clave, void *dato){
 	return se_guardo;
 }
 
+// Busca el nodo con clavemínimo de un ABB.
+const abb_t* abb_buscar_min(abb_t* arbol){
+	if (arbol->izq == NULL)
+		return arbol;
+	return abb_buscar_min(arbol->izq);
+}
+
+// Busca el nodo máximo de un ABB.
+const abb_t* abb_buscar_max(abb_t* arbol){
+	if (arbol->der == NULL)
+		return arbol;
+	return abb_buscar_max(arbol->der);
+}
+
 void *abb_borrar(abb_t *arbol, const char *clave){
 	if (arbol->nodos == 0)
 		return NULL;
@@ -113,7 +127,35 @@ void *abb_borrar(abb_t *arbol, const char *clave){
 			return NULL;
 		dato = abb_borrar(arbol->der, clave);
 	} else if (cmp == 0){
-		// Hacer después, caso más complejo.
+		dato = arbol->dato;
+
+		if ( (arbol->izq == NULL) && (arbol->der == NULL) ){
+			arbol->dato = NULL;
+			free(arbol->clave);
+			arbol->clave = NULL;
+		} else {
+			abb_t* arbol_temp;
+			void* dato_temp;
+			char* clave_temp;
+
+			if (arbol->izq != NULL) {
+				arbol_temp = abb_buscar_max(arbol->izq);
+				clave_temp = strdup(arbol_temp->clave);
+				if (clave_temp == NULL)
+					return NULL;
+				dato_temp = abb_borrar(arbol->izq, clave_temp);
+			} else {
+				arbol_temp = abb_buscar_min(arbol->der);
+				clave_temp = strdup(arbol_temp->clave);
+				if (clave_temp == NULL)
+					return NULL;
+				dato_temp = abb_borrar(arbol->der, clave_temp);
+			}
+
+			arbol->dato = dato_temp;
+			free(arbol->clave);
+			arbol->clave = clave_temp;
+		}
 	} 
 
 	abb_recalcular_nodos(arbol);
