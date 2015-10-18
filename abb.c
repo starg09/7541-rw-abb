@@ -35,7 +35,7 @@ abb_t* abb_crear(abb_comparar_clave_t cmp, abb_destruir_dato_t destruir_dato){
 void abb_recalcular_nodos(abb_t* arbol){
 	arbol->nodos = 0;
 	// Esta condición es equivalente a decir que el arbol es nil.
-	if (arbol->nodos == 0)
+	if (arbol->clave == NULL)
 		return;
 	// Si no es nil, entonces la raíz implica que existe por lo menos un nodo, sin contar
 	// los de las ramas.
@@ -48,6 +48,7 @@ void abb_recalcular_nodos(abb_t* arbol){
 
 bool abb_guardar(abb_t *arbol, const char *clave, void *dato){
 	bool se_guardo = true;
+	// Esta condición también es equivalente a decir que el arbol es nil.
 	if (arbol->nodos == 0){
 		char* copia_clave = strdup(clave);
 		if (copia == NULL)
@@ -68,6 +69,12 @@ bool abb_guardar(abb_t *arbol, const char *clave, void *dato){
 				arbol->izq = nuevo_arbol_izq;
 			}
 			se_guardo = abb_guardar(arbol->izq, clave, dato);
+			
+			if (!se_guardo){
+				abb_destruir(arbol->izq);
+				arbol->izq = NULL;
+				return false;
+			}
 		} else if (cmp > 0){
 			if (arbol->der == NULL){
 				abb_t* nuevo_arbol_der = abb_crear(arbol->func_comp, arbol->func_destruct);
@@ -76,6 +83,12 @@ bool abb_guardar(abb_t *arbol, const char *clave, void *dato){
 				arbol->der = nuevo_arbol_der;
 			}
 			se_guardo = abb_guardar(arbol->der, clave, dato);
+
+			if (!se_guardo){
+				abb_destruir(arbol->der);
+				arbol->der = NULL;
+				return false;
+			}
 		}
 	}
 
