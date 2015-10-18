@@ -83,3 +83,26 @@ bool abb_guardar(abb_t *arbol, const char *clave, void *dato){
 	return se_guardo;
 }
 
+void *abb_borrar(abb_t *arbol, const char *clave){
+	if (arbol->nodos == 0)
+		return NULL;
+
+	void* dato;
+
+	int cmp = (arbol->func_comp(clave, arbol->clave) );
+
+	if (cmp < 0){
+		if (arbol->izq == NULL)
+			return NULL;
+		dato = abb_borrar(arbol->izq, clave);
+	} else if (cmp > 0){
+		if (arbol->der == NULL)
+			return NULL;
+		dato = abb_borrar(arbol->der, clave);
+	} else if (cmp == 0){
+		// Hacer después, caso más complejo.
+	} 
+
+	abb_recalcular_nodos(arbol);
+	return dato;
+}
