@@ -1,5 +1,6 @@
 #include "abb.h"
 #include "strdup.h"
+#include <string.h>
 
 // Estructura del ABB (y en este caso del nodo mismo)
 
@@ -56,7 +57,7 @@ bool abb_guardar(abb_t *arbol, const char *clave, void *dato){
 	// Esta condición también es equivalente a decir que el arbol es nil.
 	if (abb_es_nil(arbol)){
 		char* copia_clave = strdup(clave);
-		if (copia == NULL)
+		if (copia_clave == NULL)
 			return false;
 		arbol->clave = copia_clave;
 		arbol->dato = dato;
@@ -102,14 +103,14 @@ bool abb_guardar(abb_t *arbol, const char *clave, void *dato){
 }
 
 // Busca el nodo con clavemínimo de un ABB.
-const abb_t* abb_buscar_min(abb_t* arbol){
+abb_t* abb_buscar_min(abb_t* arbol){
 	if (arbol->izq == NULL)
 		return arbol;
 	return abb_buscar_min(arbol->izq);
 }
 
 // Busca el nodo máximo de un ABB.
-const abb_t* abb_buscar_max(abb_t* arbol){
+abb_t* abb_buscar_max(abb_t* arbol){
 	if (arbol->der == NULL)
 		return arbol;
 	return abb_buscar_max(arbol->der);
@@ -179,7 +180,7 @@ void *abb_obtener(const abb_t *arbol, const char *clave){
 	if (abb_es_nil(arbol)) {
 		return NULL;
 	} else {
-		comp = strcmp(arbol->clave, clave)
+		int comp = strcmp(arbol->clave, clave);
 
 		if (comp == 0)
 			return arbol->dato;
@@ -204,10 +205,46 @@ void abb_destruir(abb_t *arbol){
 			abb_destruir(arbol->der);
 
 		if (arbol->func_destruct != NULL)
-			func_destruct(arbol->dato);
+			arbol->func_destruct(arbol->dato);
 
 		free(arbol->clave);
 	}
 
 	free(arbol);
+}
+
+
+void abb_in_order(abb_t *arbol, bool (*visitar)(const char *, void *, void *), void *extra){
+	// TO-DO
+	return;
+}
+
+
+// TO-DO
+struct abb_iter;
+
+
+abb_iter_t *abb_iter_in_crear(const abb_t *arbol){
+	// TO-DO
+	return NULL;
+}
+
+bool abb_iter_in_avanzar(abb_iter_t *iter){
+	// TO-DO
+	return true;
+}
+
+const char *abb_iter_in_ver_actual(const abb_iter_t *iter){
+	// TO-DO
+	return NULL;
+}
+
+bool abb_iter_in_al_final(const abb_iter_t *iter){
+	// TO-DO
+	return true;
+}
+
+void abb_iter_in_destruir(abb_iter_t* iter){
+	// TO-DO
+	return;
 }
