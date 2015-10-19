@@ -31,11 +31,16 @@ abb_t* abb_crear(abb_comparar_clave_t cmp, abb_destruir_dato_t destruir_dato){
 	return arbol;
 }
 
+// Devuelve true si el ABB está vacío. Es decir, si es nil.
+bool abb_es_nil(const abb_t* arbol){
+	return (arbol->clave == NULL);
+}
+
 // Recalcula los nodos que posee un ABB. Se utiliza al guardar o borrar dentro del mismo.
 void abb_recalcular_nodos(abb_t* arbol){
 	arbol->nodos = 0;
 	// Esta condición es equivalente a decir que el arbol es nil.
-	if (arbol->clave == NULL)
+	if (abb_es_nil(arbol))
 		return;
 	// Si no es nil, entonces la raíz implica que existe por lo menos un nodo, sin contar
 	// los de las ramas.
@@ -49,7 +54,7 @@ void abb_recalcular_nodos(abb_t* arbol){
 bool abb_guardar(abb_t *arbol, const char *clave, void *dato){
 	bool se_guardo = true;
 	// Esta condición también es equivalente a decir que el arbol es nil.
-	if (arbol->nodos == 0){
+	if (abb_es_nil(arbol)){
 		char* copia_clave = strdup(clave);
 		if (copia == NULL)
 			return false;
@@ -111,7 +116,7 @@ const abb_t* abb_buscar_max(abb_t* arbol){
 }
 
 void *abb_borrar(abb_t *arbol, const char *clave){
-	if (arbol->nodos == 0)
+	if (abb_es_nil(arbol))
 		return NULL;
 
 	void* dato;
@@ -171,23 +176,19 @@ void *abb_borrar(abb_t *arbol, const char *clave){
 }
 
 void *abb_obtener(const abb_t *arbol, const char *clave){
-	if (arbol->nodos == 0)
+	if (abb_es_nil(arbol)) {
 		return NULL;
+	} else {
+		comp = strcmp(arbol->clave, clave)
 
-	void* dato;
-
-	int cmp = (arbol->func_comp(clave, arbol->clave) );
-
-	if (cmp < 0){
-		if (arbol->izq == NULL)
+		if (comp == 0)
+			return arbol->dato;
+		else if ( (comp < 0) && (arbol->izq != NULL) )
+			return abb_obtener(arbol->izq, clave);
+		else if ( (comp > 0) && (arbol->der != NULL) )
+			return abb_obtener(arbol->der, clave);
+		else
 			return NULL;
-		dato = abb_obtener(arbol->izq, clave);
-	} else if (cmp > 0){
-		if (arbol->der == NULL)
-			return NULL;
-		dato = abb_obtener(arbol->der, clave);
-	} else if (cmp == 0){
-		return arbol->dato;
 	}
 }
 
@@ -196,7 +197,7 @@ size_t abb_cantidad(abb_t *arbol){
 }
 
 void abb_destruir(abb_t *arbol){
-	if (arbol->nodos > 0){
+	if (!abb_es_nil(arbol)){
 		if (arbol->izq != NULL)
 			abb_destruir(arbol->izq);
 		if (arbol->der != NULL)
