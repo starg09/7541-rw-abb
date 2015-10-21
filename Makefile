@@ -1,6 +1,6 @@
 CFLAGS=-g -std=c99 -Wall -Wconversion -Wtype-limits -pedantic -Werror
 EXEC=correr_pruebas
-OBJ=testing.o strdup.o abb.o
+OBJ=strdup.o pila.o testing.o abb.o 
 CC=gcc
 
 all: $(EXEC)
