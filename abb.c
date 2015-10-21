@@ -1,6 +1,7 @@
 #include "abb.h"
 #include "strdup.h"
 #include "pila.h"
+#include "cola.h"
 #include <string.h>
 
 // Estructura del ABB (y en este caso del nodo mismo)
@@ -214,6 +215,7 @@ void abb_destruir(abb_t *arbol){
 	free(arbol);
 }
 
+// FUNCIONES DEL ITERADOR INTERNO
 
 void abb_in_order(abb_t *arbol, bool (*visitar)(const char *, void *, void *), void *extra){
     if (!abb_es_nil(arbol)) {
@@ -229,9 +231,10 @@ void abb_in_order(abb_t *arbol, bool (*visitar)(const char *, void *, void *), v
 }
 
 
-// TO-DO
+// FUNCIONES DEL ITERADOR EXTERNO
+
 struct abb_iter {
-	pila_t* pila_iter = pila_crear();
+	pila_t* pila_iter;
 };
 
 void apilar_hijos_izquierdos(pila_t* pila, abb_t* arbol) {
@@ -249,6 +252,11 @@ abb_iter_t *abb_iter_in_crear(const abb_t *arbol){
 	if (!iter) {
 		return NULL;
 	}
+	pila_t* pila = pila_crear();
+	if (!pila) {
+		return NULL;
+	}
+	iter->pila_iter = pila;
     pila_apilar(iter->pila_iter, arbol);
     apilar_hijos_izquierdos(iter->pila_iter, arbol->izq);
 	return iter;
@@ -257,8 +265,7 @@ abb_iter_t *abb_iter_in_crear(const abb_t *arbol){
 bool abb_iter_in_avanzar(abb_iter_t *iter){
 	abb_t* arbol_temp = pila_desapilar(iter->pila_iter);
 	if (!abb_es_nil(arbol_temp->der)) {
-		pila_apilar(iter->pila_iter, arbol_temp->der);
-		apilar_hijos_izquierdos(arbol_temp->izq);
+		apilar_hijos_izquierdos(arbol_temp->der);
 		return true;
 	}
 	return false;
@@ -275,4 +282,25 @@ bool abb_iter_in_al_final(const abb_iter_t *iter){
 void abb_iter_in_destruir(abb_iter_t* iter){
 	pila_destruir(iter->pila_iter);
 	free(iter);
+}
+
+void imprimir_por_niveles(const abb_t* arbol){
+	if(!abb_es_nil(arbol)){
+  		cola_t* cola = cola_crear(); 
+  		if (cola != NULL) {
+  			abb_t* arbol_temp;
+  			cola_encolar(cola, arbol);
+  			while(!cola_esta_vacia(cola)){
+  				arbol_temp = cola_desencolar(cola);
+  				printf(" %s |", arbol_temp->clave);
+  				if (!abb_es_nil(arbol_temp->izq)) {
+  					cola_encolar(cola, arbol_temp->izq);
+  				}
+  				if (!abb_es_nil(arbol_temp->der)) {
+  					cola_encolar(cola, arbol_temp->der);
+  				}
+  			}
+  		cola_destruir(cola,NULL);
+  		}
+  	}
 }

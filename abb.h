@@ -72,6 +72,14 @@ void abb_destruir(abb_t *arbol);
 // Post: EL ABB fue recorrido. Se aplicó la función "visitar" a cada nodo.
 void abb_in_order(abb_t *arbol, bool (*visitar)(const char *, void *, void *), void *extra);
 
+////////////////////////////////////////////////////////////////////////
+///  FUNCION DE IMPRESION POR NIVELES DEL ARBOL BINARIO DE BUSQUEDA  ///
+////////////////////////////////////////////////////////////////////////
+
+// Imprime por pantalla todas las claves del ABB pasado por parametro.
+// Pre: El ABB fue creado.
+// Post: se imprimieron todos los niveles del arbol
+void imprimir_por_niveles(const abb_t* arbol);
 
 
 ///////////////////////////////////////////////////////////////////
