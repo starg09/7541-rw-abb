@@ -1,5 +1,6 @@
 #include "abb.h"
 #include "strdup.h"
+#include "pila.h"
 #include <string.h>
 
 // Estructura del ABB (y en este caso del nodo mismo)
@@ -215,8 +216,16 @@ void abb_destruir(abb_t *arbol){
 
 
 void abb_in_order(abb_t *arbol, bool (*visitar)(const char *, void *, void *), void *extra){
-	// TO-DO
-	return;
+    if (!abb_es_nil(arbol)) {
+        if (arbol->izq != NULL) {
+            abb_in_order(arbol->izq, visitar, extra);
+            }
+        if (visitar(arbol->clave, arbol->dato, extra)) {
+            if (arbol->der != NULL) {
+                abb_in_order(arbol->der, visitar, extra);    
+            }
+        }
+    }
 }
 
 
