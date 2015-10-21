@@ -215,6 +215,7 @@ void abb_destruir(abb_t *arbol){
 	free(arbol);
 }
 
+// Iterador interno IN-ORDER
 
 void abb_in_order(abb_t *arbol, bool (*visitar)(const char *, void *, void *), void *extra){
     if (!abb_es_nil(arbol)) {
@@ -230,7 +231,8 @@ void abb_in_order(abb_t *arbol, bool (*visitar)(const char *, void *, void *), v
 }
 
 
-// TO-DO
+// Funciones de el iterador externo IN-ORDER
+
 struct abb_iter {
 	pila_t* pila_iter;
 };
@@ -286,6 +288,8 @@ void abb_iter_in_destruir(abb_iter_t* iter){
 	pila_destruir(iter->pila_iter);
 	free(iter);
 }
+
+// Funcion de impresion por niveles
 
 void imprimir_por_niveles(const abb_t* arbol){
 	if(!abb_es_nil(arbol)){
