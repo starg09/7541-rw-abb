@@ -3,6 +3,8 @@
 #include "pila.h"
 #include "cola.h"
 #include <string.h>
+#include <stdio.h>
+#include <stdbool.h>
 
 // Estructura del ABB (y en este caso del nodo mismo)
 
@@ -219,16 +221,12 @@ void abb_destruir(abb_t *arbol){
 
 void abb_in_order(abb_t *arbol, bool (*visitar)(const char *, void *, void *), void *extra){
     if (!abb_es_nil(arbol)) {
-        if ( (arbol->izq != NULL) && (!abb_es_nil(arbol->izq)) ) {
-            abb_in_order(arbol->izq, visitar, extra);
-            }
+        abb_in_order(arbol->izq, visitar, extra);
         if (visitar(arbol->clave, arbol->dato, extra)) {
-            if ( (arbol->der != NULL) && (!abb_es_nil(arbol->der)) ) {
-                abb_in_order(arbol->der, visitar, extra);    
+            abb_in_order(arbol->der, visitar, extra);    
             }
         }
     }
-}
 
 
 // Funciones de el iterador externo IN-ORDER
@@ -238,9 +236,9 @@ struct abb_iter {
 };
 
 void apilar_hijos_izquierdos(pila_t* pila, abb_t* arbol) {
-	if (!abb_es_nil(arbol)) {
-		pila_apilar(pila, arbol);
-		if (!abb_es_nil(arbol->izq)) {
+	if (arbol != NULL) {
+		pila_apilar(pila, (void*)arbol);
+		if (arbol->izq != NULL) {
 			apilar_hijos_izquierdos(pila, arbol->izq);
 		}
 	}
@@ -259,25 +257,28 @@ abb_iter_t *abb_iter_in_crear(const abb_t *arbol){
 	}
 
 	iter->pila_iter = pila_iter;
-
-    pila_apilar(iter->pila_iter, (void*)arbol);
-    apilar_hijos_izquierdos(iter->pila_iter, arbol->izq);
+	if (!abb_es_nil(arbol)) {
+	    pila_apilar(iter->pila_iter, (void*)arbol);
+    	apilar_hijos_izquierdos(iter->pila_iter, arbol->izq);
+	}
 	return iter;
 }
 
 bool abb_iter_in_avanzar(abb_iter_t *iter){
-	abb_t* arbol_temp = pila_desapilar(iter->pila_iter);
-	if ( (arbol_temp->der != NULL) && (!abb_es_nil(arbol_temp->der)) ) {
-		pila_apilar(iter->pila_iter, arbol_temp->der);
-		apilar_hijos_izquierdos(iter->pila_iter, arbol_temp->izq);
+	if (!pila_esta_vacia(iter->pila_iter)) {
+		abb_t* arbol_temp = (abb_t*)pila_desapilar(iter->pila_iter);
+		if ( (arbol_temp->der != NULL) && (!abb_es_nil(arbol_temp->der)) ) {
+			pila_apilar(iter->pila_iter, (void*)arbol_temp->der);
+			apilar_hijos_izquierdos(iter->pila_iter, arbol_temp->izq);
+		}
 		return true;
 	}
 	return false;
 }
 
 const char *abb_iter_in_ver_actual(const abb_iter_t *iter){
-	abb_t* actual = pila_ver_tope(iter->pila_iter);
-	return actual->clave;
+	abb_t* actual = (abb_t*)pila_ver_tope(iter->pila_iter);
+	return actual ? actual->clave : NULL;
 }
 
 bool abb_iter_in_al_final(const abb_iter_t *iter){
@@ -291,23 +292,23 @@ void abb_iter_in_destruir(abb_iter_t* iter){
 
 // Funcion de impresion por niveles
 
-void imprimir_por_niveles(const abb_t* arbol){
+/*void imprimir_por_niveles(const abb_t* arbol){
 	if(!abb_es_nil(arbol)){
   		cola_t* cola = cola_crear(); 
   		if (cola != NULL) {
   			abb_t* arbol_temp;
-  			cola_encolar(cola, arbol);
+  			cola_encolar(cola, (void*)arbol);
   			while(!cola_esta_vacia(cola)){
   				arbol_temp = cola_desencolar(cola);
   				printf(" %s |", arbol_temp->clave);
   				if (!abb_es_nil(arbol_temp->izq)) {
-  					cola_encolar(cola, arbol_temp->izq);
+  					cola_encolar(cola, (void*)arbol_temp->izq);
   				}
   				if (!abb_es_nil(arbol_temp->der)) {
-  					cola_encolar(cola, arbol_temp->der);
+  					cola_encolar(cola, (void*)arbol_temp->der);
   				}
   			}
   		cola_destruir(cola,NULL);
   		}
   	}
-}
+}*/
