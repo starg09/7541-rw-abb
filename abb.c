@@ -197,6 +197,23 @@ void *abb_obtener(const abb_t *arbol, const char *clave){
 	}
 }
 
+bool abb_pertenece(const abb_t *arbol, const char *clave){
+	if (abb_es_nil(arbol)) {
+		return false;
+	} else {
+		int comp = strcmp(arbol->clave, clave);
+
+		if (comp == 0)
+			return true;
+		else if ( (comp < 0) && (arbol->izq != NULL) )
+			return abb_obtener(arbol->izq, clave);
+		else if ( (comp > 0) && (arbol->der != NULL) )
+			return abb_obtener(arbol->der, clave);
+		else
+			return false;
+	}
+}
+
 size_t abb_cantidad(abb_t *arbol){
 	return arbol->nodos;
 }
