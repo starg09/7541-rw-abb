@@ -162,7 +162,7 @@ void *abb_borrar(abb_t *arbol, const char *clave){
 				}
 			} else {
 				arbol_temp = abb_buscar_min(arbol->der);
-				if (arbol_temp == NULL)
+				if (arbol_temp->clave == NULL)
 					return NULL;
 				clave_temp = strdup(arbol_temp->clave);
 				if (clave_temp == NULL)
