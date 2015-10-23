@@ -20,6 +20,20 @@ char* clave6 = "Cristian";
 char* clave7 = "Alan";
 char* clave8 = "Barbara";
 
+bool imprimir_clave(const char* clave, void* dato, void* extra) {
+	if (clave != NULL){
+		printf("%s\n", clave);
+    	return true;
+    }
+    return false;
+ }
+
+bool (*visitar)(const char *, void *, void *) = imprimir_clave;
+
+static void prueba_abb_iter_interno(abb_t* arbol) {
+    abb_in_order(arbol, visitar, NULL);
+}
+
 static void prueba_abb_volumen(size_t largo, bool debug)
 {
     abb_t* abb3 = abb_crear(strcmp, NULL);
@@ -139,8 +153,37 @@ void pruebas_abb_alumno() {
 	print_test("Ver actual con el iterador es NULL", abb_iter_in_ver_actual(iter2) == NULL);
 	print_test("El iterador esta al final", abb_iter_in_al_final(iter2) == true);
     abb_iter_in_destruir(iter2);
+    print_test("Borrar clave 4", abb_borrar(abb2, clave4) == NULL);
+  	print_test("El ABB tiene 7 nodos", abb_cantidad(abb2) == 7);
+    iter2 = abb_iter_in_crear(abb2);
+	print_test("El iterador fue creado", iter2 != NULL);
+	print_test("Primer clave es 'Alan'", strcmp(abb_iter_in_ver_actual(iter2), clave7) == 0);
+	printf("%s\n", abb_iter_in_ver_actual(iter2));
+	print_test("Avanzo con el iterador", abb_iter_in_avanzar(iter2) == true);
+	print_test("Segunda clave es 'Barbara'", strcmp(abb_iter_in_ver_actual(iter2), clave8) == 0);
+	printf("%s\n", abb_iter_in_ver_actual(iter2));
+	print_test("Avanzo con el iterador", abb_iter_in_avanzar(iter2) == true);
+	print_test("Tercera clave es 'Carlos'", strcmp(abb_iter_in_ver_actual(iter2), clave3) == 0);
+	printf("%s\n", abb_iter_in_ver_actual(iter2));
+	print_test("Avanzo con el iterador", abb_iter_in_avanzar(iter2) == true);
+	print_test("Cuarta clave es 'Cristian'", strcmp(abb_iter_in_ver_actual(iter2), clave6) == 0);
+	printf("%s\n", abb_iter_in_ver_actual(iter2));
+	print_test("Avanzo con el iterador", abb_iter_in_avanzar(iter2) == true);
+	print_test("Quinta clave es 'Guillermo'", strcmp(abb_iter_in_ver_actual(iter2), clave5) == 0);
+	printf("%s\n", abb_iter_in_ver_actual(iter2));
+	print_test("Avanzo con el iterador", abb_iter_in_avanzar(iter2) == true);
+	print_test("Sexta clave es 'Ines'", strcmp(abb_iter_in_ver_actual(iter2), clave2) == 0);
+	printf("%s\n", abb_iter_in_ver_actual(iter2));
+	print_test("Avanzo con el iterador", abb_iter_in_avanzar(iter2) == true);
+	print_test("Septima clave es 'Maria'", strcmp(abb_iter_in_ver_actual(iter2), clave1) == 0);
+	printf("%s\n", abb_iter_in_ver_actual(iter2));
+	print_test("El iterador esta al final", abb_iter_in_al_final(iter2) == true);
+	print_test("Ver actual con el iterador es NULL", abb_iter_in_ver_actual(iter2) == NULL);
+	print_test("Avanzar con el iterador es false", abb_iter_in_avanzar(iter2) == false);
+	prueba_abb_iter_interno(abb2);
+	abb_iter_in_destruir(iter2);
 	abb_destruir(abb2);
-
+    
 	//Prueba de volumen modificada del abb
     prueba_abb_volumen(500, true);
 

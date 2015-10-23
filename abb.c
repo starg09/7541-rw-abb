@@ -236,7 +236,7 @@ void abb_destruir(abb_t *arbol){
 // Iterador interno IN-ORDER
 
 void abb_in_order(abb_t *arbol, bool (*visitar)(const char *, void *, void *), void *extra){
-    if (!abb_es_nil(arbol)) {
+    if (arbol != NULL && !abb_es_nil(arbol)) {
         abb_in_order(arbol->izq, visitar, extra);
         if (visitar(arbol->clave, arbol->dato, extra)) {
             abb_in_order(arbol->der, visitar, extra);    
@@ -299,7 +299,7 @@ const char *abb_iter_in_ver_actual(const abb_iter_t *iter){
 }
 
 bool abb_iter_in_al_final(const abb_iter_t *iter){
-	return (pila_ver_tope(iter->pila_iter) == NULL);
+	return (abb_iter_in_ver_actual(iter) == NULL);
 }
 
 void abb_iter_in_destruir(abb_iter_t* iter){
