@@ -5,6 +5,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 // Estructura del ABB (y en este caso del nodo mismo)
 
