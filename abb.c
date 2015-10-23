@@ -125,7 +125,7 @@ void *abb_borrar(abb_t *arbol, const char *clave){
 
 	void* dato;
 
-	int cmp = (arbol->func_comp(clave, arbol->clave) );
+	int cmp = (arbol->func_comp(clave, arbol->clave));
 
 	if (cmp < 0){
 		if (arbol->izq == NULL)
@@ -159,6 +159,8 @@ void *abb_borrar(abb_t *arbol, const char *clave){
 				}
 			} else {
 				arbol_temp = abb_buscar_min(arbol->der);
+				if (arbol_temp == NULL)
+					return NULL;
 				clave_temp = strdup(arbol_temp->clave);
 				if (clave_temp == NULL)
 					return NULL;
@@ -183,11 +185,10 @@ void *abb_obtener(const abb_t *arbol, const char *clave){
 	if (abb_es_nil(arbol)) {
 		return NULL;
 	} else {
-		int comp = strcmp(arbol->clave, clave);
-
-		if (comp == 0)
+		int comp = (arbol->func_comp)(clave, arbol->clave);
+		if (comp == 0) {
 			return arbol->dato;
-		else if ( (comp < 0) && (arbol->izq != NULL) )
+		} else if ( (comp < 0) && (arbol->izq != NULL) )
 			return abb_obtener(arbol->izq, clave);
 		else if ( (comp > 0) && (arbol->der != NULL) )
 			return abb_obtener(arbol->der, clave);
@@ -200,7 +201,7 @@ bool abb_pertenece(const abb_t *arbol, const char *clave){
 	if (abb_es_nil(arbol)) {
 		return false;
 	} else {
-		int comp = strcmp(arbol->clave, clave);
+		int comp = (arbol->func_comp)(clave, arbol->clave);
 
 		if (comp == 0)
 			return true;
@@ -288,8 +289,6 @@ bool abb_iter_in_avanzar(abb_iter_t *iter){
 		pila_apilar(iter->pila_iter, (void*)arbol_temp->der);
 		apilar_hijos_izquierdos(iter->pila_iter, arbol_temp->der);
 	}
-	if (abb_iter_in_al_final(iter))
-		return false;
 	return true;
 }
 
@@ -299,6 +298,10 @@ const char *abb_iter_in_ver_actual(const abb_iter_t *iter){
 }
 
 bool abb_iter_in_al_final(const abb_iter_t *iter){
+	if (abb_iter_in_ver_actual(iter) != NULL)
+		printf("%s\n", abb_iter_in_ver_actual(iter));
+	else
+		printf("FINAL\n");
 	return (abb_iter_in_ver_actual(iter) == NULL);
 }
 
