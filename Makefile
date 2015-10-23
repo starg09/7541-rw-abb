@@ -13,3 +13,7 @@ clear:
 
 $(EXEC): $(OBJ) main.c
 	$(CC) $(CFLAGS) $(OBJ) pruebas_alumno.c main.c -o $(EXEC)
+
+zip:
+	rm ./ABB\ -\ 98373\ -\ Bianchi\ -\ 96251\ -\ Queirolo\ Dominguez.zip
+	zip ./ABB\ -\ 98373\ -\ Bianchi\ -\ 96251\ -\ Queirolo\ Dominguez.zip *.c *.h Makefile
