@@ -135,8 +135,8 @@ void pruebas_abb_alumno() {
 	print_test("Avanzo con el iterador", abb_iter_in_avanzar(iter2) == true);
 	print_test("Octava clave es 'Roberto'", strcmp(abb_iter_in_ver_actual(iter2), clave4) == 0);
 	printf("%s\n", abb_iter_in_ver_actual(iter2));
-	print_test("Ver actual con el iterador es NULL", abb_iter_in_ver_actual(iter2) == NULL);
 	print_test("Avanzar con el iterador es false", abb_iter_in_avanzar(iter2) == false);
+	print_test("Ver actual con el iterador es NULL", abb_iter_in_ver_actual(iter2) == NULL);
 	print_test("El iterador esta al final", abb_iter_in_al_final(iter2) == true);
     abb_iter_in_destruir(iter2);
 	abb_destruir(abb2);
