@@ -150,6 +150,8 @@ void *abb_borrar(abb_t *arbol, const char *clave){
 
 			if (arbol->izq != NULL) {
 				arbol_temp = abb_buscar_max(arbol->izq);
+				if (arbol_temp->clave == NULL)
+					return NULL;
 				clave_temp = strdup(arbol_temp->clave);
 				if (clave_temp == NULL)
 					return NULL;
