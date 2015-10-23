@@ -101,7 +101,6 @@ bool abb_guardar(abb_t *arbol, const char *clave, void *dato){
 			}
 		}
 	}
-
 	abb_recalcular_nodos(arbol);
 	return se_guardo;
 }
@@ -206,9 +205,9 @@ bool abb_pertenece(const abb_t *arbol, const char *clave){
 		if (comp == 0)
 			return true;
 		else if ( (comp < 0) && (arbol->izq != NULL) )
-			return abb_obtener(arbol->izq, clave);
+			return abb_pertenece(arbol->izq, clave);
 		else if ( (comp > 0) && (arbol->der != NULL) )
-			return abb_obtener(arbol->der, clave);
+			return abb_pertenece(arbol->der, clave);
 		else
 			return false;
 	}
@@ -252,10 +251,11 @@ struct abb_iter {
 	pila_t* pila_iter;
 };
 
-void apilar_hijos_izquierdos(pila_t* pila, abb_t* arbol) {
+void apilar_hijos_izquierdos(pila_t* pila, const abb_t* arbol) {
 	if (arbol != NULL) {
-		pila_apilar(pila, (void*)arbol);
 		if (arbol->izq != NULL) {
+			printf("Nodo a la izquierda: %s\n", arbol->izq->clave);
+			pila_apilar(pila, (void*)arbol->izq);
 			apilar_hijos_izquierdos(pila, arbol->izq);
 		}
 	}
@@ -276,21 +276,26 @@ abb_iter_t *abb_iter_in_crear(const abb_t *arbol){
 	iter->pila_iter = pila_iter;
 	if (!abb_es_nil(arbol)) {
 	    pila_apilar(iter->pila_iter, (void*)arbol);
-    	apilar_hijos_izquierdos(iter->pila_iter, arbol->izq);
+		printf("Raíz apilada: %s\n", arbol->clave);
+    	apilar_hijos_izquierdos(iter->pila_iter, arbol);
 	}
 	return iter;
 }
 
 bool abb_iter_in_avanzar(abb_iter_t *iter){
-	if (!pila_esta_vacia(iter->pila_iter)) {
-		abb_t* arbol_temp = (abb_t*)pila_desapilar(iter->pila_iter);
-		if ( (arbol_temp->der != NULL) && (!abb_es_nil(arbol_temp->der)) ) {
-			pila_apilar(iter->pila_iter, (void*)arbol_temp->der);
-			apilar_hijos_izquierdos(iter->pila_iter, arbol_temp->izq);
-		}
-		return true;
+	if (pila_esta_vacia(iter->pila_iter))
+		return false;
+	printf("Actual: %s\n", abb_iter_in_ver_actual(iter));
+	abb_t* arbol_temp = (abb_t*)pila_desapilar(iter->pila_iter);
+	if (arbol_temp->der != NULL) {
+		printf("Nodo a la derecha: %s\n", arbol_temp->der->clave);
+		pila_apilar(iter->pila_iter, (void*)arbol_temp->der);
+		apilar_hijos_izquierdos(iter->pila_iter, arbol_temp->der);
+		printf("Nuevo: %s\n", abb_iter_in_ver_actual(iter));
 	}
-	return false;
+	if (pila_esta_vacia(iter->pila_iter))
+		return false;
+	return true;
 }
 
 const char *abb_iter_in_ver_actual(const abb_iter_t *iter){
