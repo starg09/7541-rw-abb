@@ -185,15 +185,15 @@ void *abb_borrar(abb_t *arbol, const char *clave){
 }
 
 void *abb_obtener(const abb_t *arbol, const char *clave){
-	if (abb_es_nil(arbol)) {
+	if (arbol == NULL || abb_es_nil(arbol) ) {
 		return NULL;
 	} else {
-		int comp = (arbol->func_comp)(clave, arbol->clave);
+		int comp = arbol->func_comp(clave, arbol->clave);
 		if (comp == 0) {
 			return arbol->dato;
-		} else if ( (comp < 0) && (arbol->izq != NULL) )
+		} else if (comp < 0)
 			return abb_obtener(arbol->izq, clave);
-		else if ( (comp > 0) && (arbol->der != NULL) )
+		else if (comp > 0)
 			return abb_obtener(arbol->der, clave);
 		else
 			return NULL;
@@ -201,16 +201,16 @@ void *abb_obtener(const abb_t *arbol, const char *clave){
 }
 
 bool abb_pertenece(const abb_t *arbol, const char *clave){
-	if (abb_es_nil(arbol)) {
+	if (arbol == NULL || abb_es_nil(arbol)) {
 		return false;
 	} else {
-		int comp = (arbol->func_comp)(clave, arbol->clave);
+		int comp = arbol->func_comp(clave, arbol->clave);
 
 		if (comp == 0)
 			return true;
-		else if ( (comp < 0) && (arbol->izq != NULL) )
+		else if (comp < 0) 
 			return abb_pertenece(arbol->izq, clave);
-		else if ( (comp > 0) && (arbol->der != NULL) )
+		else if (comp > 0)
 			return abb_pertenece(arbol->der, clave);
 		else
 			return false;
@@ -301,10 +301,6 @@ const char *abb_iter_in_ver_actual(const abb_iter_t *iter){
 }
 
 bool abb_iter_in_al_final(const abb_iter_t *iter){
-	if (abb_iter_in_ver_actual(iter) != NULL)
-		printf("%s\n", abb_iter_in_ver_actual(iter));
-	else
-		printf("FINAL\n");
 	return (abb_iter_in_ver_actual(iter) == NULL);
 }
 
