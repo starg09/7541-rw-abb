@@ -11,7 +11,7 @@ all: $(EXEC)
 clear:
 	rm $(OBJ) $(EXEC)
 
-$(EXEC): $(OBJ) main.c
+$(EXEC): $(OBJ) pruebas_alumno.c main.c
 	$(CC) $(CFLAGS) $(OBJ) pruebas_alumno.c main.c -o $(EXEC)
 
 zip:
