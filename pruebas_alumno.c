@@ -28,10 +28,9 @@ bool imprimir_clave(const char* clave, void* dato, void* extra) {
     return false;
  }
 
-bool (*visitar)(const char *, void *, void *) = imprimir_clave;
 
 static void prueba_abb_iter_interno(abb_t* arbol) {
-    abb_in_order(arbol, visitar, NULL);
+    abb_in_order(arbol, imprimir_clave, NULL);
 }
 
 static void prueba_abb_volumen(size_t largo, bool debug)
