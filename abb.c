@@ -51,9 +51,9 @@ void abb_recalcular_nodos(abb_t* arbol){
 	// Si no es nil, entonces la raíz implica que existe por lo menos un nodo, sin contar
 	// los de las ramas.
 	arbol->nodos++;
-	if (arbol->izq != NULL)
+	if (arbol->izq != NULL && !abb_es_nil(arbol->izq))
 		arbol->nodos += arbol->izq->nodos;
-	if (arbol->der != NULL)
+	if (arbol->der != NULL && !abb_es_nil(arbol->der))
 		arbol->nodos += arbol->der->nodos;
 }
 
@@ -121,7 +121,7 @@ abb_t* abb_buscar_max(abb_t* arbol){
 }
 
 void *abb_borrar(abb_t *arbol, const char *clave){
-	if (abb_es_nil(arbol))
+	if (arbol == NULL || abb_es_nil(arbol))
 		return NULL;
 
 	void* dato;
@@ -129,17 +129,17 @@ void *abb_borrar(abb_t *arbol, const char *clave){
 	int cmp = (arbol->func_comp(clave, arbol->clave));
 
 	if (cmp < 0){
-		if (arbol->izq == NULL)
+		if (arbol->izq == NULL || abb_es_nil(arbol->izq))
 			return NULL;
 		dato = abb_borrar(arbol->izq, clave);
 	} else if (cmp > 0){
-		if (arbol->der == NULL)
+		if (arbol->der == NULL || abb_es_nil(arbol->der))
 			return NULL;
 		dato = abb_borrar(arbol->der, clave);
 	} else if (cmp == 0){
 		dato = arbol->dato;
 
-		if ( (arbol->izq == NULL) && (arbol->der == NULL) ){
+		if ( (arbol->izq == NULL || abb_es_nil(arbol->izq)) && (arbol->der == NULL || abb_es_nil(arbol->der)) ){
 			arbol->dato = NULL;
 			free(arbol->clave);
 			arbol->clave = NULL;
@@ -148,9 +148,9 @@ void *abb_borrar(abb_t *arbol, const char *clave){
 			void* dato_temp;
 			char* clave_temp;
 
-			if (arbol->izq != NULL) {
+			if (arbol->izq != NULL && !abb_es_nil(arbol->izq)) {
 				arbol_temp = abb_buscar_max(arbol->izq);
-				if (arbol_temp->clave == NULL)
+				if (abb_es_nil(arbol_temp))
 					return NULL;
 				clave_temp = strdup(arbol_temp->clave);
 				if (clave_temp == NULL)
@@ -162,7 +162,7 @@ void *abb_borrar(abb_t *arbol, const char *clave){
 				}
 			} else {
 				arbol_temp = abb_buscar_min(arbol->der);
-				if (arbol_temp->clave == NULL)
+				if (abb_es_nil(arbol_temp))
 					return NULL;
 				clave_temp = strdup(arbol_temp->clave);
 				if (clave_temp == NULL)
@@ -185,15 +185,15 @@ void *abb_borrar(abb_t *arbol, const char *clave){
 }
 
 void *abb_obtener(const abb_t *arbol, const char *clave){
-	if (arbol == NULL || abb_es_nil(arbol) ) {
+	if (abb_es_nil(arbol)) {
 		return NULL;
 	} else {
-		int comp = arbol->func_comp(clave, arbol->clave);
+		int comp = (arbol->func_comp)(clave, arbol->clave);
 		if (comp == 0) {
 			return arbol->dato;
-		} else if (comp < 0)
+		} else if ( (comp < 0) && (arbol->izq != NULL) )
 			return abb_obtener(arbol->izq, clave);
-		else if (comp > 0)
+		else if ( (comp > 0) && (arbol->der != NULL) )
 			return abb_obtener(arbol->der, clave);
 		else
 			return NULL;
@@ -201,16 +201,16 @@ void *abb_obtener(const abb_t *arbol, const char *clave){
 }
 
 bool abb_pertenece(const abb_t *arbol, const char *clave){
-	if (arbol == NULL || abb_es_nil(arbol)) {
+	if (abb_es_nil(arbol)) {
 		return false;
 	} else {
-		int comp = arbol->func_comp(clave, arbol->clave);
+		int comp = (arbol->func_comp)(clave, arbol->clave);
 
 		if (comp == 0)
 			return true;
-		else if (comp < 0) 
+		else if ( (comp < 0) && (arbol->izq != NULL) )
 			return abb_pertenece(arbol->izq, clave);
-		else if (comp > 0)
+		else if ( (comp > 0) && (arbol->der != NULL) )
 			return abb_pertenece(arbol->der, clave);
 		else
 			return false;
@@ -308,26 +308,3 @@ void abb_iter_in_destruir(abb_iter_t* iter){
 	pila_destruir(iter->pila_iter);
 	free(iter);
 }
-
-// Funcion de impresion por niveles
-
-/*void imprimir_por_niveles(const abb_t* arbol){
-	if(!abb_es_nil(arbol)){
-  		cola_t* cola = cola_crear(); 
-  		if (cola != NULL) {
-  			abb_t* arbol_temp;
-  			cola_encolar(cola, (void*)arbol);
-  			while(!cola_esta_vacia(cola)){
-  				arbol_temp = cola_desencolar(cola);
-  				printf(" %s |", arbol_temp->clave);
-  				if (!abb_es_nil(arbol_temp->izq)) {
-  					cola_encolar(cola, (void*)arbol_temp->izq);
-  				}
-  				if (!abb_es_nil(arbol_temp->der)) {
-  					cola_encolar(cola, (void*)arbol_temp->der);
-  				}
-  			}
-  		cola_destruir(cola,NULL);
-  		}
-  	}
-}*/
