@@ -51,9 +51,9 @@ void abb_recalcular_nodos(abb_t* arbol){
 	// Si no es nil, entonces la raíz implica que existe por lo menos un nodo, sin contar
 	// los de las ramas.
 	arbol->nodos++;
-	if (arbol->izq != NULL && !abb_es_nil(arbol->izq))
+	if (arbol->izq != NULL)
 		arbol->nodos += arbol->izq->nodos;
-	if (arbol->der != NULL && !abb_es_nil(arbol->der))
+	if (arbol->der != NULL)
 		arbol->nodos += arbol->der->nodos;
 }
 
@@ -121,7 +121,7 @@ abb_t* abb_buscar_max(abb_t* arbol){
 }
 
 void *abb_borrar(abb_t *arbol, const char *clave){
-	if (arbol == NULL || abb_es_nil(arbol))
+	if (!arbol || abb_es_nil(arbol))
 		return NULL;
 
 	void* dato;
@@ -129,20 +129,25 @@ void *abb_borrar(abb_t *arbol, const char *clave){
 	int cmp = (arbol->func_comp(clave, arbol->clave));
 
 	if (cmp < 0){
-		if (arbol->izq == NULL || abb_es_nil(arbol->izq))
+		if (arbol->izq == NULL)
 			return NULL;
 		dato = abb_borrar(arbol->izq, clave);
 	} else if (cmp > 0){
-		if (arbol->der == NULL || abb_es_nil(arbol->der))
+		if (arbol->der == NULL)
 			return NULL;
 		dato = abb_borrar(arbol->der, clave);
 	} else if (cmp == 0){
 		dato = arbol->dato;
 
-		if ( (arbol->izq == NULL || abb_es_nil(arbol->izq)) && (arbol->der == NULL || abb_es_nil(arbol->der)) ){
+		if (abb_cantidad(arbol) == 1){
 			arbol->dato = NULL;
 			free(arbol->clave);
 			arbol->clave = NULL;
+			if (arbol->izq != NULL && abb_es_nil(arbol->izq))
+				abb_destruir(arbol->izq);
+			if (arbol->der != NULL && abb_es_nil(arbol->der))
+				abb_destruir(arbol->der);
+			arbol->nodos = 0;
 		} else {
 			abb_t* arbol_temp;
 			void* dato_temp;
@@ -150,7 +155,7 @@ void *abb_borrar(abb_t *arbol, const char *clave){
 
 			if (arbol->izq != NULL && !abb_es_nil(arbol->izq)) {
 				arbol_temp = abb_buscar_max(arbol->izq);
-				if (abb_es_nil(arbol_temp))
+				if (arbol_temp->clave == NULL)
 					return NULL;
 				clave_temp = strdup(arbol_temp->clave);
 				if (clave_temp == NULL)
@@ -160,9 +165,9 @@ void *abb_borrar(abb_t *arbol, const char *clave){
 					abb_destruir(arbol->izq);
 					arbol->izq = NULL;
 				}
-			} else {
+			} else if (arbol->der != NULL && !abb_es_nil(arbol->der)){
 				arbol_temp = abb_buscar_min(arbol->der);
-				if (abb_es_nil(arbol_temp))
+				if (arbol_temp->clave == NULL)
 					return NULL;
 				clave_temp = strdup(arbol_temp->clave);
 				if (clave_temp == NULL)
@@ -179,21 +184,20 @@ void *abb_borrar(abb_t *arbol, const char *clave){
 			arbol->clave = clave_temp;
 		}
 	} 
-
 	abb_recalcular_nodos(arbol);
 	return dato;
 }
 
 void *abb_obtener(const abb_t *arbol, const char *clave){
-	if (abb_es_nil(arbol)) {
+	if (arbol == NULL || abb_es_nil(arbol) ) {
 		return NULL;
 	} else {
-		int comp = (arbol->func_comp)(clave, arbol->clave);
+		int comp = arbol->func_comp(clave, arbol->clave);
 		if (comp == 0) {
 			return arbol->dato;
-		} else if ( (comp < 0) && (arbol->izq != NULL) )
+		} else if (comp < 0)
 			return abb_obtener(arbol->izq, clave);
-		else if ( (comp > 0) && (arbol->der != NULL) )
+		else if (comp > 0)
 			return abb_obtener(arbol->der, clave);
 		else
 			return NULL;
@@ -201,16 +205,16 @@ void *abb_obtener(const abb_t *arbol, const char *clave){
 }
 
 bool abb_pertenece(const abb_t *arbol, const char *clave){
-	if (abb_es_nil(arbol)) {
+	if (arbol == NULL || abb_es_nil(arbol)) {
 		return false;
 	} else {
-		int comp = (arbol->func_comp)(clave, arbol->clave);
+		int comp = arbol->func_comp(clave, arbol->clave);
 
 		if (comp == 0)
 			return true;
-		else if ( (comp < 0) && (arbol->izq != NULL) )
+		else if (comp < 0) 
 			return abb_pertenece(arbol->izq, clave);
-		else if ( (comp > 0) && (arbol->der != NULL) )
+		else if (comp > 0)
 			return abb_pertenece(arbol->der, clave);
 		else
 			return false;
