@@ -132,31 +132,46 @@ void *abb_borrar(abb_t *arbol, const char *clave){
 		if (arbol->izq == NULL)
 			return NULL;
 		dato = abb_borrar(arbol->izq, clave);
+		if (arbol->izq->nodos == 0){
+			abb_destruir(arbol->izq);
+			arbol->izq = NULL;
+		}
 	} else if (cmp > 0){
 		if (arbol->der == NULL)
 			return NULL;
 		dato = abb_borrar(arbol->der, clave);
+		if (arbol->der->nodos == 0){
+			abb_destruir(arbol->der);
+			arbol->der = NULL;
+		}
 	} else if (cmp == 0){
 		dato = arbol->dato;
-
 		if (abb_cantidad(arbol) == 1){
 			arbol->dato = NULL;
 			free(arbol->clave);
 			arbol->clave = NULL;
-			if (arbol->izq != NULL && abb_es_nil(arbol->izq))
+			if (arbol->izq != NULL){
 				abb_destruir(arbol->izq);
-			if (arbol->der != NULL && abb_es_nil(arbol->der))
+				arbol->izq = NULL;
+			}
+
+			if (arbol->der != NULL){
 				abb_destruir(arbol->der);
+				arbol->der = NULL;
+			}
+
 			arbol->nodos = 0;
 		} else {
 			abb_t* arbol_temp;
 			void* dato_temp;
 			char* clave_temp;
 
-			if (arbol->izq != NULL && !abb_es_nil(arbol->izq)) {
+			if ((arbol->izq != NULL) && (!abb_es_nil(arbol->izq))) {
 				arbol_temp = abb_buscar_max(arbol->izq);
-				if (arbol_temp->clave == NULL)
+				if (arbol_temp->clave == NULL){	
+					//printf("ERROR ACA\n");
 					return NULL;
+				}
 				clave_temp = strdup(arbol_temp->clave);
 				if (clave_temp == NULL)
 					return NULL;
@@ -165,7 +180,7 @@ void *abb_borrar(abb_t *arbol, const char *clave){
 					abb_destruir(arbol->izq);
 					arbol->izq = NULL;
 				}
-			} else if (arbol->der != NULL && !abb_es_nil(arbol->der)){
+			} else if ((arbol->der != NULL) && (!abb_es_nil(arbol->der))) {
 				arbol_temp = abb_buscar_min(arbol->der);
 				if (arbol_temp->clave == NULL)
 					return NULL;
