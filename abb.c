@@ -69,6 +69,8 @@ bool abb_guardar(abb_t *arbol, const char *clave, void *dato){
 	} else {
 		int cmp = (arbol->func_comp(clave, arbol->clave) );
 		if (cmp == 0){
+			if (arbol->func_destruct != NULL)
+				arbol->func_destruct(arbol->dato);
 			arbol->dato = dato;
 			// No hace falta recalcular nodos en este caso, puedo retornar directamente.
 			return true;

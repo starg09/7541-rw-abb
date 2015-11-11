@@ -97,7 +97,7 @@ static void prueba_abb_volumen(size_t largo, bool debug)
 
 void pruebas_abb_alumno() {
 	//ABB VACIO
-	abb_t* abb1 = abb_crear(strcmp, free);
+	abb_t* abb1 = abb_crear(strcmp, NULL);
 	print_test("El ABB fue creado exitosamente", abb1 != NULL);
 	print_test("El ABB esta vacio inicialmente", abb_cantidad(abb1) == 0);
 	print_test("Existe nodo con clave 'Prueba' es false", abb_pertenece(abb1, "Prueba") == false );
@@ -110,7 +110,7 @@ void pruebas_abb_alumno() {
     abb_iter_in_destruir(iter1);
     abb_destruir(abb1);   
     //ABB 1 ELEMENTO
-    abb1 = abb_crear(strcmp, free);
+    abb1 = abb_crear(strcmp, NULL);
     print_test("El ABB fue creado exitosamente", abb1 != NULL);
 	print_test("El ABB esta vacio inicialmente", abb_cantidad(abb1) == 0);
 	print_test("Existe nodo con clave 'Prueba' es false", abb_pertenece(abb1, "Prueba") == false );
@@ -118,6 +118,25 @@ void pruebas_abb_alumno() {
 	print_test("Guardar clave1 fue logrado exitosamente", abb_guardar(abb1, clave1, NULL) == true );
 	print_test("Arbol tiene 1 nodo", abb_cantidad(abb1) == 1);
     print_test("Borrar clave 1", abb_borrar(abb1, clave1) == NULL);
+  	print_test("Clave 1 no pertenece", abb_pertenece(abb1, clave1) == false);
+  	print_test("Obtener clave 1 es NULL", abb_obtener(abb1, clave1) == NULL);
+    abb_destruir(abb1);
+
+    //ABB FUNCIÓN DESTRUCTORA
+    abb1 = abb_crear(strcmp, free);
+    print_test("El ABB fue creado exitosamente (con funcion destructora)", abb1 != NULL);
+	print_test("El ABB esta vacio inicialmente", abb_cantidad(abb1) == 0);
+	print_test("Existe nodo con clave 'Prueba' es false", abb_pertenece(abb1, "Prueba") == false );
+	print_test("Obtener dato de nodo con clave 'Prueba' es NULL", abb_obtener(abb1, "Prueba") == NULL );
+	int* dato1 = malloc(sizeof(int));
+	int* dato2 = malloc(sizeof(int));
+	print_test("Guardar clave1 fue logrado exitosamente", abb_guardar(abb1, clave1, dato1) == true );
+	print_test("Obtener dato de nodo con clave 'Prueba' es dato 1", abb_obtener(abb1, "Prueba") == NULL );
+	print_test("Guardar clave1 con nueva clave fue logrado exitosamente", abb_guardar(abb1, clave1, dato2) == true );
+	print_test("Obtener dato de nodo con clave 'Prueba' es dato 2", abb_obtener(abb1, "Prueba") == NULL );
+	print_test("Arbol tiene 1 nodo", abb_cantidad(abb1) == 1);
+    print_test("Borrar clave 1", abb_borrar(abb1, clave1) == dato2);
+    free(dato2); //Dato recuperado en la prueba anterior, lo borro...
   	print_test("Clave 1 no pertenece", abb_pertenece(abb1, clave1) == false);
   	print_test("Obtener clave 1 es NULL", abb_obtener(abb1, clave1) == NULL);
     abb_destruir(abb1);
